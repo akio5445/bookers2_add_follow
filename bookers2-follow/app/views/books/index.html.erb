@@ -1,0 +1,74 @@
+<div class="container">
+	<div class="row">
+		<div class="col-xs-3">
+
+			<h2>User info</h2>
+			
+			<table class="table">
+					<tr><%= attachment_image_tag(@user, :profile_image, :fill, 100, 100, fallback: "no_image.jpg") %></tr>
+					<tr>
+						<th>name</th>
+						<th><%= @user.name %></th>
+					</tr>
+					<tr>
+						<th>introduction</th>
+						<th><%= @user.introduction %></th>
+					</tr><hr>
+					<%= render 'users/stats', user: @user %>
+			</table>
+			<% unless current_user?(@user) %>
+				<% if current_user.following?(@user) %>
+				  <div class="row">
+						<td><%= render 'users/unfollow', user: @user %></td>
+					</div>
+				<% else %>
+					<div class="row">
+						<td><%= render 'users/follow', user: @user %></td>
+					</div>
+				<% end %>
+			<% end %>
+			<div class="row">
+				<%= link_to '',edit_user_path(current_user), class: "col-xs-12 btn btn-default glyphicon glyphicon-wrench " %>
+			</div>
+			
+			<h2>New book</h2>
+			<%= render 'books/newform', book: @book %>
+
+		</div>
+
+		<div class="col-xs-9">
+			<h2>Books index</h2>
+			<!--books一覧 -->
+			<table class="table table-hover table-inverse">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Title</th>
+						<th>Opinion</th>
+						<th colspan="3"></th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<% @books.each do |book| %>
+						<tr>
+							<td>
+								<%= link_to(book.user) do %>
+									<%= attachment_image_tag(book.user, :profile_image, :fill, 50, 50, fallback: "no-image-mini.jpg") %>
+								<% end %>
+							</td>
+							<td><%= link_to book.title, book, class: "book_#{book.id}" %></td>
+							<td><%= book.body %></td>
+
+              <td><%= render "favorites/favorite", book: book %></td>
+              <td><p>コメント数: <%= BookComment.where(book_id: book.id).count %></p></td>
+          
+						</tr>
+					<% end %>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+<p id="notice"><%= notice %></p>
+</div>
